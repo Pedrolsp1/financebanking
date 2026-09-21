@@ -10,33 +10,79 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EntradasRouteImport } from './routes/entradas'
+import { Route as InvestimentosRouteImport } from './routes/investimentos'
+import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as SaidasRouteImport } from './routes/saidas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntradasRoute = EntradasRouteImport.update({
+  id: '/entradas',
+  path: '/entradas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestimentosRoute = InvestimentosRouteImport.update({
+  id: '/investimentos',
+  path: '/investimentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosRoute = RelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SaidasRoute = SaidasRouteImport.update({
+  id: '/saidas',
+  path: '/saidas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/entradas': typeof EntradasRoute
+  '/investimentos': typeof InvestimentosRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/saidas': typeof SaidasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/entradas': typeof EntradasRoute
+  '/investimentos': typeof InvestimentosRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/saidas': typeof SaidasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/entradas': typeof EntradasRoute
+  '/investimentos': typeof InvestimentosRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/saidas': typeof SaidasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/entradas' | '/investimentos' | '/relatorios' | '/saidas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/entradas' | '/investimentos' | '/relatorios' | '/saidas'
+  id:
+    | '__root__'
+    | '/'
+    | '/entradas'
+    | '/investimentos'
+    | '/relatorios'
+    | '/saidas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EntradasRoute: typeof EntradasRoute
+  InvestimentosRoute: typeof InvestimentosRoute
+  RelatoriosRoute: typeof RelatoriosRoute
+  SaidasRoute: typeof SaidasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +94,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entradas': {
+      id: '/entradas'
+      path: '/entradas'
+      fullPath: '/entradas'
+      preLoaderRoute: typeof EntradasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investimentos': {
+      id: '/investimentos'
+      path: '/investimentos'
+      fullPath: '/investimentos'
+      preLoaderRoute: typeof InvestimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios': {
+      id: '/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saidas': {
+      id: '/saidas'
+      path: '/saidas'
+      fullPath: '/saidas'
+      preLoaderRoute: typeof SaidasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EntradasRoute: EntradasRoute,
+  InvestimentosRoute: InvestimentosRoute,
+  RelatoriosRoute: RelatoriosRoute,
+  SaidasRoute: SaidasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
