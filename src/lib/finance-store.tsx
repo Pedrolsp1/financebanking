@@ -171,7 +171,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       .reduce((s, e) => s + e.value, 0);
     const budgetUsed = debitTotal - invested + cardBill;
     const balance = STARTING_BALANCE + income - cardBill - debitTotal;
-    const netWorth = evolution[evolution.length - 1].netWorth + invested;
+    const netWorth = (evolution[evolution.length - 1]?.netWorth ?? 0) + invested;
 
     return {
       incomes,
