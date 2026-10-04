@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { RowActions } from "@/components/RowActions";
 import { brl, formatDate, useFinance } from "@/lib/finance-store";
 
 export const Route = createFileRoute("/investimentos")({
@@ -46,7 +47,19 @@ const COLORS = [
 ];
 
 function Investments() {
-  const { debitExpenses, cardExpenses, goals, addGoal, totals } = useFinance();
+  const {
+    debitExpenses,
+    cardExpenses,
+    goals,
+    addGoal,
+    updateGoal,
+    deleteGoal,
+    updateDebitExpense,
+    deleteDebitExpense,
+    updateCardExpense,
+    deleteCardExpense,
+    totals,
+  } = useFinance();
   const [name, setName] = useState("");
   const [target, setTarget] = useState("");
   const [saved, setSaved] = useState("");
@@ -146,6 +159,7 @@ function Investments() {
                   <TableHead>Data</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
                   <TableHead className="text-right">%</TableHead>
+                  <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -156,6 +170,23 @@ function Investments() {
                     <TableCell className="text-right font-semibold">{brl(a.value)}</TableCell>
                     <TableCell className="text-right text-muted-foreground">
                       {((a.value / total) * 100).toFixed(1)}%
+                    </TableCell>
+                    <TableCell>
+                      <RowActions
+                        title="Editar aporte"
+                        record={a}
+                        fields={[
+                          { key: "name", label: "Ativo", type: "text" },
+                          { key: "value", label: "Valor (R$)", type: "number" },
+                          { key: "date", label: "Data", type: "date" },
+                        ]}
+                        onSave={(v) =>
+                          "method" in a ? updateDebitExpense(a.id, v) : updateCardExpense(a.id, v)
+                        }
+                        onDelete={() =>
+                          "method" in a ? deleteDebitExpense(a.id) : deleteCardExpense(a.id)
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -179,8 +210,19 @@ function Investments() {
                 <div key={g.id}>
                   <div className="mb-2 flex flex-wrap justify-between gap-2 text-sm">
                     <span className="font-medium">{g.name}</span>
-                    <span className="text-muted-foreground">
+                    <span className="flex items-center gap-2 text-muted-foreground">
                       {brl(g.saved)} de {brl(g.target)} · {pct.toFixed(0)}%
+                      <RowActions
+                        title="Editar meta"
+                        record={g}
+                        fields={[
+                          { key: "name", label: "Nome da meta", type: "text" },
+                          { key: "target", label: "Valor alvo (R$)", type: "number" },
+                          { key: "saved", label: "Já guardado (R$)", type: "number" },
+                        ]}
+                        onSave={(v) => updateGoal(g.id, v)}
+                        onDelete={() => deleteGoal(g.id)}
+                      />
                     </span>
                   </div>
                   <Progress value={pct} className="h-3" />

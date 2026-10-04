@@ -34,6 +34,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { RowActions } from "@/components/RowActions";
 import {
   CATEGORIES,
   CREDIT_LIMIT,
@@ -88,7 +89,7 @@ function Expenses() {
 }
 
 function CreditTab() {
-  const { cardExpenses, addCardExpense, totals } = useFinance();
+  const { cardExpenses, addCardExpense, updateCardExpense, deleteCardExpense, totals } = useFinance();
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const [category, setCategory] = useState<Category>("Compras");
@@ -244,6 +245,7 @@ function CreditTab() {
                   <TableHead>Data</TableHead>
                   <TableHead>Parcelas</TableHead>
                   <TableHead className="text-right">Valor total</TableHead>
+                  <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -258,6 +260,23 @@ function CreditTab() {
                       {e.installments}x {brl(e.value / e.installments)}
                     </TableCell>
                     <TableCell className="text-right font-semibold">{brl(e.value)}</TableCell>
+                    <TableCell>
+                      <RowActions
+                        title="Editar compra"
+                        record={e}
+                        fields={[
+                          { key: "name", label: "Nome", type: "text" },
+                          { key: "value", label: "Valor total (R$)", type: "number" },
+                          { key: "category", label: "Categoria", type: "select", options: CATEGORIES },
+                          { key: "date", label: "Data", type: "date" },
+                          { key: "installments", label: "Parcelas", type: "number" },
+                        ]}
+                        onSave={(v) =>
+                          updateCardExpense(e.id, { ...v, installments: Math.max(1, Number(v['installments'])) })
+                        }
+                        onDelete={() => deleteCardExpense(e.id)}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -270,7 +289,7 @@ function CreditTab() {
 }
 
 function DebitTab() {
-  const { debitExpenses, addDebitExpense, totals } = useFinance();
+  const { debitExpenses, addDebitExpense, updateDebitExpense, deleteDebitExpense, totals } = useFinance();
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const [category, setCategory] = useState<Category>("Casa");
@@ -386,6 +405,7 @@ function DebitTab() {
                   <TableHead>Forma</TableHead>
                   <TableHead>Data</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -398,6 +418,21 @@ function DebitTab() {
                     <TableCell className="text-muted-foreground">{e.method}</TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(e.date)}</TableCell>
                     <TableCell className="text-right font-semibold">−{brl(e.value)}</TableCell>
+                    <TableCell>
+                      <RowActions
+                        title="Editar gasto"
+                        record={e}
+                        fields={[
+                          { key: "name", label: "Nome", type: "text" },
+                          { key: "value", label: "Valor (R$)", type: "number" },
+                          { key: "category", label: "Categoria", type: "select", options: CATEGORIES },
+                          { key: "method", label: "Forma", type: "select", options: ["Débito", "Pix"] },
+                          { key: "date", label: "Data", type: "date" },
+                        ]}
+                        onSave={(v) => updateDebitExpense(e.id, v)}
+                        onDelete={() => deleteDebitExpense(e.id)}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
