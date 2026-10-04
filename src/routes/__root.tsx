@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import {
   Outlet,
   Link,
@@ -100,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-  errorComponent: ({ error, reset }) => <ErrorComponent error={error} reset={reset} />,
+  errorComponent: (props: ErrorComponentProps) => <ErrorComponent error={props.error} reset={props.reset} />,
 });
 
 function RootShell({ children }: { children: ReactNode }) {
