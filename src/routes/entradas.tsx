@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { RowActions } from "@/components/RowActions";
 import { brl, formatDate, useFinance } from "@/lib/finance-store";
 
 export const Route = createFileRoute("/entradas")({
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/entradas")({
 });
 
 function Incomes() {
-  const { incomes, addIncome, totals } = useFinance();
+  const { incomes, addIncome, updateIncome, deleteIncome, totals } = useFinance();
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const [date, setDate] = useState("2026-09-20");
@@ -132,6 +133,7 @@ function Incomes() {
                   <TableHead>Data</TableHead>
                   <TableHead>Tipo</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -146,6 +148,20 @@ function Incomes() {
                     </TableCell>
                     <TableCell className="text-right font-semibold text-emerald-600">
                       +{brl(i.value)}
+                    </TableCell>
+                    <TableCell>
+                      <RowActions
+                        title="Editar entrada"
+                        record={i}
+                        fields={[
+                          { key: "name", label: "Nome", type: "text" },
+                          { key: "value", label: "Valor (R$)", type: "number" },
+                          { key: "date", label: "Data", type: "date" },
+                          { key: "recurring", label: "Recorrente", type: "switch" },
+                        ]}
+                        onSave={(v) => updateIncome(i.id, v)}
+                        onDelete={() => deleteIncome(i.id)}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
