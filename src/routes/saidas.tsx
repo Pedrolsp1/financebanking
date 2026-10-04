@@ -272,7 +272,7 @@ function CreditTab() {
                           { key: "installments", label: "Parcelas", type: "number" },
                         ]}
                         onSave={(v) =>
-                          updateCardExpense(e.id, { ...v, installments: Math.max(1, Number(v.installments)) })
+                          updateCardExpense(e.id, { ...v, installments: Math.max(1, Number(v['installments'])) })
                         }
                         onDelete={() => deleteCardExpense(e.id)}
                       />
