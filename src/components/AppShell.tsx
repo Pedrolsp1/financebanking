@@ -19,7 +19,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { brl, evolution, useFinance } from "@/lib/finance-store";
+import { brl, useFinance } from "@/lib/finance-store";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -30,8 +30,8 @@ const nav = [
 ] as const;
 
 function EvolutionStrip() {
-  const { totals } = useFinance();
-  const data = evolution;
+  const { totals, evolutionLive } = useFinance();
+  const data = evolutionLive;
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">

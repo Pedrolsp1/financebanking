@@ -14,7 +14,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { brl, monthlyHistory, weeklyHistory, yearlyHistory } from "@/lib/finance-store";
+import { brl, useFinance, weeklyHistory, yearlyHistory } from "@/lib/finance-store";
 
 export const Route = createFileRoute("/relatorios")({
   head: () => ({
@@ -36,13 +36,22 @@ export const Route = createFileRoute("/relatorios")({
 
 const datasets = {
   semana: weeklyHistory,
-  mes: monthlyHistory,
+  mes: weeklyHistory,
   ano: yearlyHistory,
 };
 
 function Reports() {
   const [range, setRange] = useState<keyof typeof datasets>("mes");
-  const data = datasets[range];
+  const { monthlyLive, totals } = useFinance();
+  const spent = totals.cardBill + totals.debitTotal;
+  const data =
+    range === "mes"
+      ? monthlyLive
+      : range === "semana"
+        ? weeklyHistory.map((w) => ({ ...w, income: totals.income / 4, expenses: spent / 4 }))
+        : yearlyHistory.map((y, i, a) =>
+            i === a.length - 1 ? { ...y, income: y.income - 12570 + totals.income, expenses: y.expenses - 8950 + spent } : y,
+          );
 
   const income = data.reduce((s, d) => s + d.income, 0);
   const expenses = data.reduce((s, d) => s + d.expenses, 0);

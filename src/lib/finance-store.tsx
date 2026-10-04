@@ -141,6 +141,16 @@ type Store = {
   addCardExpense: (e: Omit<CardExpense, "id">) => void;
   addDebitExpense: (e: Omit<DebitExpense, "id">) => void;
   addGoal: (g: Omit<Goal, "id">) => void;
+  updateIncome: (id: string, d: Partial<Income>) => void;
+  deleteIncome: (id: string) => void;
+  updateCardExpense: (id: string, d: Partial<CardExpense>) => void;
+  deleteCardExpense: (id: string) => void;
+  updateDebitExpense: (id: string, d: Partial<DebitExpense>) => void;
+  deleteDebitExpense: (id: string) => void;
+  updateGoal: (id: string, d: Partial<Goal>) => void;
+  deleteGoal: (id: string) => void;
+  evolutionLive: EvolutionPoint[];
+  monthlyLive: typeof monthlyHistory;
   totals: {
     income: number;
     cardBill: number;
@@ -162,6 +172,10 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const [goals, setGoals] = useState<Goal[]>(initialGoals);
 
   const value = useMemo<Store>(() => {
+    const upd = <T extends { id: string }>(set: React.Dispatch<React.SetStateAction<T[]>>) =>
+      (id: string, d: Partial<T>) => set((p) => p.map((x) => (x.id === id ? { ...x, ...d } : x)));
+    const del = <T extends { id: string }>(set: React.Dispatch<React.SetStateAction<T[]>>) =>
+      (id: string) => set((p) => p.filter((x) => x.id !== id));
     const income = incomes.reduce((s, i) => s + i.value, 0);
     const cardBill = cardExpenses.reduce((s, e) => s + e.value / e.installments, 0);
     const cardTotal = cardExpenses.reduce((s, e) => s + e.value, 0);
@@ -171,7 +185,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       .reduce((s, e) => s + e.value, 0);
     const budgetUsed = debitTotal - invested + cardBill;
     const balance = STARTING_BALANCE + income - cardBill - debitTotal;
-    const netWorth = (evolution[evolution.length - 1]?.netWorth ?? 0) + invested;
+    const netWorth = (evolution[evolution.length - 2]?.netWorth ?? 0) + invested + Math.max(0, income - cardBill - debitTotal);
 
     return {
       incomes,
@@ -182,6 +196,20 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       addCardExpense: (e) => setCardExpenses((p) => [{ ...e, id: uid() }, ...p]),
       addDebitExpense: (e) => setDebitExpenses((p) => [{ ...e, id: uid() }, ...p]),
       addGoal: (g) => setGoals((p) => [...p, { ...g, id: uid() }]),
+      updateIncome: upd(setIncomes),
+      deleteIncome: del(setIncomes),
+      updateCardExpense: upd(setCardExpenses),
+      deleteCardExpense: del(setCardExpenses),
+      updateDebitExpense: upd(setDebitExpenses),
+      deleteDebitExpense: del(setDebitExpenses),
+      updateGoal: upd(setGoals),
+      deleteGoal: del(setGoals),
+      evolutionLive: evolution.map((p, i, a) =>
+        i === a.length - 1 ? { ...p, netWorth: (a[i - 1]?.netWorth ?? 0) + invested + Math.max(0, income - cardBill - debitTotal), balance: income - cardBill - debitTotal } : p,
+      ),
+      monthlyLive: monthlyHistory.map((p, i, a) =>
+        i === a.length - 1 ? { ...p, income, expenses: cardBill + debitTotal } : p,
+      ),
       totals: { income, cardBill, cardTotal, debitTotal, budgetUsed, invested, balance, netWorth },
     };
   }, [incomes, cardExpenses, debitExpenses, goals]);
