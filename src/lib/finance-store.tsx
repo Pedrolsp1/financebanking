@@ -37,6 +37,18 @@ export type DebitExpense = {
   category: Category;
   date: string;
   method: "Débito" | "Pix";
+  cdiPct?: number;
+};
+
+/** Taxa CDI anual de referência (editável no futuro) */
+export const CDI_ANNUAL = 0.1415;
+
+/** Rendimento estimado de um aporte: juros compostos diários desde a data até hoje */
+export const estimateYield = (value: number, cdiPct: number, date: string) => {
+  const annual = CDI_ANNUAL * (cdiPct / 100);
+  const days = Math.max(0, (Date.now() - new Date(date).getTime()) / 86400000);
+  const current = value * Math.pow(1 + annual, days / 365);
+  return { annual, yearly: value * annual, earned: current - value, current };
 };
 
 export type Goal = {
@@ -75,9 +87,9 @@ const initialDebit: DebitExpense[] = [
   { id: uid(), name: "Feira da semana", value: 210, category: "Casa", date: "2026-09-03", method: "Pix" },
   { id: uid(), name: "Uber", value: 86, category: "Transporte", date: "2026-09-04", method: "Débito" },
   { id: uid(), name: "Cinema", value: 74, category: "Lazer", date: "2026-09-07", method: "Pix" },
-  { id: uid(), name: "Aporte Tesouro Selic", value: 1500, category: "Investimento", date: "2026-09-08", method: "Pix" },
-  { id: uid(), name: "Aporte ETF IVVB11", value: 900, category: "Investimento", date: "2026-09-11", method: "Pix" },
-  { id: uid(), name: "Aporte Fundo Imobiliário", value: 600, category: "Investimento", date: "2026-09-13", method: "Pix" },
+  { id: uid(), name: "CDB Banco X", value: 1500, category: "Investimento", date: "2026-09-08", method: "Pix", cdiPct: 140 },
+  { id: uid(), name: "LCI Banco Y", value: 900, category: "Investimento", date: "2026-09-11", method: "Pix", cdiPct: 120 },
+  { id: uid(), name: "Tesouro Selic", value: 600, category: "Investimento", date: "2026-09-13", method: "Pix", cdiPct: 100 },
   { id: uid(), name: "Farmácia", value: 132, category: "Outros", date: "2026-09-15", method: "Débito" },
   { id: uid(), name: "Delivery sushi", value: 119, category: "Delivery", date: "2026-09-17", method: "Pix" },
 ];
