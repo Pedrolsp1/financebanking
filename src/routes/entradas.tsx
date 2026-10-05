@@ -41,7 +41,7 @@ function Incomes() {
   const { incomes, addIncome, updateIncome, deleteIncome, totals } = useFinance();
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
-  const [date, setDate] = useState("2026-09-20");
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [recurring, setRecurring] = useState(false);
 
   const recurringTotal = incomes.filter((i) => i.recurring).reduce((s, i) => s + i.value, 0);

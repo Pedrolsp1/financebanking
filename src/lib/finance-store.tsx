@@ -150,7 +150,7 @@ type Store = {
 const g = globalThis as unknown as { __financeCtx?: React.Context<Store | null> };
 const FinanceContext = g.__financeCtx ?? (g.__financeCtx = createContext<Store | null>(null));
 
-const STORAGE_KEY = "financas-pessoais-v1";
+const STORAGE_KEY = "financas-pessoais-v2";
 
 export function FinanceProvider({ children }: { children: ReactNode }) {
   const [incomes, setIncomes] = useState<Income[]>(initialIncomes);

@@ -93,7 +93,7 @@ function CreditTab() {
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const [category, setCategory] = useState<Category>("Compras");
-  const [date, setDate] = useState("2026-09-20");
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [installments, setInstallments] = useState("1");
 
   const usedPct = Math.min(100, (totals.cardBill / CREDIT_LIMIT) * 100);
@@ -293,7 +293,7 @@ function DebitTab() {
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const [category, setCategory] = useState<Category>("Casa");
-  const [date, setDate] = useState("2026-09-20");
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [method, setMethod] = useState<"Débito" | "Pix">("Pix");
 
   const budgetPct = Math.min(100, (totals.budgetUsed / MONTHLY_BUDGET) * 100);
