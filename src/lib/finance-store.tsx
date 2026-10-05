@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export const CATEGORIES = [
   "Casa",
@@ -165,11 +165,38 @@ type Store = {
 
 const FinanceContext = createContext<Store | null>(null);
 
+const STORAGE_KEY = "financas-pessoais-v1";
+
 export function FinanceProvider({ children }: { children: ReactNode }) {
   const [incomes, setIncomes] = useState<Income[]>(initialIncomes);
   const [cardExpenses, setCardExpenses] = useState<CardExpense[]>(initialCard);
   const [debitExpenses, setDebitExpenses] = useState<DebitExpense[]>(initialDebit);
   const [goals, setGoals] = useState<Goal[]>(initialGoals);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (Array.isArray(d.incomes)) setIncomes(d.incomes);
+        if (Array.isArray(d.cardExpenses)) setCardExpenses(d.cardExpenses);
+        if (Array.isArray(d.debitExpenses)) setDebitExpenses(d.debitExpenses);
+        if (Array.isArray(d.goals)) setGoals(d.goals);
+      }
+    } catch {
+      /* ignore */
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ incomes, cardExpenses, debitExpenses, goals }),
+    );
+  }, [loaded, incomes, cardExpenses, debitExpenses, goals]);
 
   const value = useMemo<Store>(() => {
     const upd = <T extends { id: string }>(set: React.Dispatch<React.SetStateAction<T[]>>) =>
@@ -180,12 +207,16 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const cardBill = cardExpenses.reduce((s, e) => s + e.value / e.installments, 0);
     const cardTotal = cardExpenses.reduce((s, e) => s + e.value, 0);
     const debitTotal = debitExpenses.reduce((s, e) => s + e.value, 0);
-    const invested = debitExpenses
+    const invested = [...debitExpenses, ...cardExpenses]
       .filter((e) => e.category === "Investimento")
       .reduce((s, e) => s + e.value, 0);
-    const budgetUsed = debitTotal - invested + cardBill;
+    const debitInvested = debitExpenses
+      .filter((e) => e.category === "Investimento")
+      .reduce((s, e) => s + e.value, 0);
+    const budgetUsed = debitTotal - debitInvested + cardBill;
     const balance = STARTING_BALANCE + income - cardBill - debitTotal;
-    const netWorth = (evolution[evolution.length - 2]?.netWorth ?? 0) + invested + Math.max(0, income - cardBill - debitTotal);
+    // Patrimônio líquido = soma de todos os aportes / ativos na carteira
+    const netWorth = invested;
 
     return {
       incomes,
