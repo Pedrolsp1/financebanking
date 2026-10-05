@@ -114,49 +114,6 @@ export const CREDIT_LIMIT = 12000;
 export const MONTHLY_BUDGET = 5000;
 export const STARTING_BALANCE = 0;
 
-export const evolution: EvolutionPoint[] = [
-  { month: "Abr", netWorth: 82400, balance: 1850 },
-  { month: "Mai", netWorth: 86100, balance: 2340 },
-  { month: "Jun", netWorth: 89950, balance: 1120 },
-  { month: "Jul", netWorth: 94300, balance: 3010 },
-  { month: "Ago", netWorth: 99180, balance: 2480 },
-  { month: "Set", netWorth: 104720, balance: 3620 },
-];
-
-export const monthlyHistory = [
-  { period: "Abr", income: 10200, expenses: 8350 },
-  { period: "Mai", income: 11150, expenses: 8810 },
-  { period: "Jun", income: 10400, expenses: 9280 },
-  { period: "Jul", income: 12300, expenses: 9290 },
-  { period: "Ago", income: 11480, expenses: 9000 },
-  { period: "Set", income: 12570, expenses: 8950 },
-];
-
-export const weeklyHistory = [
-  { period: "Sem 1", income: 4100, expenses: 2380 },
-  { period: "Sem 2", income: 3850, expenses: 2110 },
-  { period: "Sem 3", income: 2620, expenses: 2540 },
-  { period: "Sem 4", income: 2000, expenses: 1920 },
-];
-
-export const yearlyHistory = [
-  { period: "2023", income: 98400, expenses: 84200 },
-  { period: "2024", income: 118600, expenses: 96100 },
-  { period: "2025", income: 132400, expenses: 104800 },
-  { period: "2026", income: 108900, expenses: 82300 },
-];
-
-export const upcomingBills = [
-  { id: uid(), name: "Fatura do cartão", value: 3460, due: "2026-09-25" },
-  { id: uid(), name: "Aluguel", value: 2200, due: "2026-09-28" },
-  { id: uid(), name: "Internet fibra", value: 129, due: "2026-09-30" },
-  { id: uid(), name: "Academia", value: 149, due: "2026-10-02" },
-  { id: uid(), name: "Plano de saúde", value: 612, due: "2026-10-05" },
-];
-
-export const CREDIT_LIMIT = 12000;
-export const MONTHLY_BUDGET = 5000;
-export const STARTING_BALANCE = 9800;
 
 type Store = {
   incomes: Income[];
