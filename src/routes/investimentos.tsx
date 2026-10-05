@@ -17,7 +17,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RowActions } from "@/components/RowActions";
-import { brl, formatDate, useFinance } from "@/lib/finance-store";
+import { toast } from "sonner";
+import { brl, brlExact, CDI_ANNUAL, estimateYield, formatDate, useFinance } from "@/lib/finance-store";
 
 export const Route = createFileRoute("/investimentos")({
   head: () => ({
@@ -230,6 +231,8 @@ function Investments() {
                   <TableHead>Ativo</TableHead>
                   <TableHead>Data</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="text-right">% CDI</TableHead>
+                  <TableHead className="text-right">Rendimento</TableHead>
                   <TableHead className="text-right">%</TableHead>
                   <TableHead className="w-24" />
                 </TableRow>
@@ -240,6 +243,10 @@ function Investments() {
                     <TableCell className="font-medium">{a.name}</TableCell>
                     <TableCell className="text-muted-foreground">{formatDate(a.date)}</TableCell>
                     <TableCell className="text-right font-semibold">{brl(a.value)}</TableCell>
+                    <TableCell className="text-right">{pctOf(a) ? `${pctOf(a)}%` : "—"}</TableCell>
+                    <TableCell className="text-right text-primary">
+                      {pctOf(a) ? brlExact(estimateYield(a.value, pctOf(a)!, a.date).earned) : "—"}
+                    </TableCell>
                     <TableCell className="text-right text-muted-foreground">
                       {((a.value / total) * 100).toFixed(1)}%
                     </TableCell>
@@ -251,6 +258,7 @@ function Investments() {
                           { key: "name", label: "Ativo", type: "text" },
                           { key: "value", label: "Valor (R$)", type: "number" },
                           { key: "date", label: "Data", type: "date" },
+                          ...("method" in a ? [{ key: "cdiPct", label: "% do CDI", type: "number" as const }] : []),
                         ]}
                         onSave={(v) =>
                           "method" in a ? updateDebitExpense(a.id, v) : updateCardExpense(a.id, v)
