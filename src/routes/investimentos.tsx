@@ -270,6 +270,13 @@ function Investments() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {assets.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                      Nenhum aporte ainda. Adicione o primeiro acima.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
@@ -307,9 +314,14 @@ function Investments() {
                   </div>
                   <Progress value={pct} className="h-3" />
                 </div>
-              );
-            })}
-          </CardContent>
+                );
+              })}
+              {goals.length === 0 && (
+                <p className="py-4 text-center text-sm text-muted-foreground">
+                  Nenhuma meta ainda. Crie a primeira ao lado.
+                </p>
+              )}
+            </CardContent>
         </Card>
 
         <Card className="h-fit shadow-soft">
