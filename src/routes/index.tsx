@@ -111,6 +111,11 @@ function Dashboard() {
                 <p className="text-sm font-semibold">{brl(bill.value)}</p>
               </div>
             ))}
+            {upcomingBills.length === 0 && (
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                Nenhuma conta a vencer. Cadastre suas contas fixas para acompanhá-las aqui.
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -155,6 +160,11 @@ function Dashboard() {
                   <Progress value={(g.saved / g.target) * 100} />
                 </div>
               ))}
+              {goals.length === 0 && (
+                <p className="py-4 text-center text-sm text-muted-foreground">
+                  Nenhuma meta criada ainda. Crie a primeira na página de Investimentos.
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>

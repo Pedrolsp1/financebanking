@@ -66,83 +66,54 @@ export type EvolutionPoint = {
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-const initialIncomes: Income[] = [
-  { id: uid(), name: "Salário", value: 8400, date: "2026-09-05", recurring: true },
-  { id: uid(), name: "Freelance — landing page", value: 2200, date: "2026-09-12", recurring: false },
-  { id: uid(), name: "Aluguel recebido", value: 1650, date: "2026-09-10", recurring: true },
-  { id: uid(), name: "Dividendos", value: 320, date: "2026-09-15", recurring: true },
-  { id: uid(), name: "Venda de equipamento", value: 780, date: "2026-08-22", recurring: false },
-];
+const initialIncomes: Income[] = [];
 
-const initialCard: CardExpense[] = [
-  { id: uid(), name: "Notebook novo", value: 6600, category: "Compras", date: "2026-09-02", installments: 12 },
-  { id: uid(), name: "Mercado do mês", value: 940, category: "Casa", date: "2026-09-06", installments: 1 },
-  { id: uid(), name: "Passagem aérea", value: 1800, category: "Lazer", date: "2026-09-08", installments: 6 },
-  { id: uid(), name: "Curso de inglês", value: 1200, category: "Educação", date: "2026-09-09", installments: 4 },
-  { id: uid(), name: "Jantar delivery", value: 168, category: "Delivery", date: "2026-09-14", installments: 1 },
-  { id: uid(), name: "Combustível", value: 430, category: "Transporte", date: "2026-09-16", installments: 1 },
-];
+const initialCard: CardExpense[] = [];
 
-const initialDebit: DebitExpense[] = [
-  { id: uid(), name: "Feira da semana", value: 210, category: "Casa", date: "2026-09-03", method: "Pix" },
-  { id: uid(), name: "Uber", value: 86, category: "Transporte", date: "2026-09-04", method: "Débito" },
-  { id: uid(), name: "Cinema", value: 74, category: "Lazer", date: "2026-09-07", method: "Pix" },
-  { id: uid(), name: "CDB Banco X", value: 1500, category: "Investimento", date: "2026-09-08", method: "Pix", cdiPct: 140 },
-  { id: uid(), name: "LCI Banco Y", value: 900, category: "Investimento", date: "2026-09-11", method: "Pix", cdiPct: 120 },
-  { id: uid(), name: "Tesouro Selic", value: 600, category: "Investimento", date: "2026-09-13", method: "Pix", cdiPct: 100 },
-  { id: uid(), name: "Farmácia", value: 132, category: "Outros", date: "2026-09-15", method: "Débito" },
-  { id: uid(), name: "Delivery sushi", value: 119, category: "Delivery", date: "2026-09-17", method: "Pix" },
-];
+const initialDebit: DebitExpense[] = [];
 
-const initialGoals: Goal[] = [
-  { id: uid(), name: "Reserva de emergência", target: 30000, saved: 21400 },
-  { id: uid(), name: "Viagem Europa 2027", target: 18000, saved: 6200 },
-  { id: uid(), name: "Entrada do apartamento", target: 90000, saved: 24800 },
-];
+const initialGoals: Goal[] = [];
 
-export const evolution: EvolutionPoint[] = [
-  { month: "Abr", netWorth: 82400, balance: 1850 },
-  { month: "Mai", netWorth: 86100, balance: 2340 },
-  { month: "Jun", netWorth: 89950, balance: 1120 },
-  { month: "Jul", netWorth: 94300, balance: 3010 },
-  { month: "Ago", netWorth: 99180, balance: 2480 },
-  { month: "Set", netWorth: 104720, balance: 3620 },
-];
+const MONTH_LABELS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const lastMonthLabels = (n: number) =>
+  Array.from({ length: n }, (_, i) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - (n - 1 - i));
+    return MONTH_LABELS[d.getMonth()];
+  });
 
-export const monthlyHistory = [
-  { period: "Abr", income: 10200, expenses: 8350 },
-  { period: "Mai", income: 11150, expenses: 8810 },
-  { period: "Jun", income: 10400, expenses: 9280 },
-  { period: "Jul", income: 12300, expenses: 9290 },
-  { period: "Ago", income: 11480, expenses: 9000 },
-  { period: "Set", income: 12570, expenses: 8950 },
-];
+/** Históricos começam zerados — tudo passa a vir dos lançamentos reais do usuário */
+export const evolution: EvolutionPoint[] = lastMonthLabels(6).map((month) => ({
+  month,
+  netWorth: 0,
+  balance: 0,
+}));
 
-export const weeklyHistory = [
-  { period: "Sem 1", income: 4100, expenses: 2380 },
-  { period: "Sem 2", income: 3850, expenses: 2110 },
-  { period: "Sem 3", income: 2620, expenses: 2540 },
-  { period: "Sem 4", income: 2000, expenses: 1920 },
-];
+export const monthlyHistory = lastMonthLabels(6).map((period) => ({
+  period,
+  income: 0,
+  expenses: 0,
+}));
 
-export const yearlyHistory = [
-  { period: "2023", income: 98400, expenses: 84200 },
-  { period: "2024", income: 118600, expenses: 96100 },
-  { period: "2025", income: 132400, expenses: 104800 },
-  { period: "2026", income: 108900, expenses: 82300 },
-];
+export const weeklyHistory = ["Sem 1", "Sem 2", "Sem 3", "Sem 4"].map((period) => ({
+  period,
+  income: 0,
+  expenses: 0,
+}));
 
-export const upcomingBills = [
-  { id: uid(), name: "Fatura do cartão", value: 3460, due: "2026-09-25" },
-  { id: uid(), name: "Aluguel", value: 2200, due: "2026-09-28" },
-  { id: uid(), name: "Internet fibra", value: 129, due: "2026-09-30" },
-  { id: uid(), name: "Academia", value: 149, due: "2026-10-02" },
-  { id: uid(), name: "Plano de saúde", value: 612, due: "2026-10-05" },
-];
+export const yearlyHistory = ["2023", "2024", "2025", "2026"].map((period) => ({
+  period,
+  income: 0,
+  expenses: 0,
+}));
+
+export const upcomingBills: { id: string; name: string; value: number; due: string }[] = [];
 
 export const CREDIT_LIMIT = 12000;
 export const MONTHLY_BUDGET = 5000;
-export const STARTING_BALANCE = 9800;
+export const STARTING_BALANCE = 0;
+
 
 type Store = {
   incomes: Income[];
@@ -179,7 +150,7 @@ type Store = {
 const g = globalThis as unknown as { __financeCtx?: React.Context<Store | null> };
 const FinanceContext = g.__financeCtx ?? (g.__financeCtx = createContext<Store | null>(null));
 
-const STORAGE_KEY = "financas-pessoais-v1";
+const STORAGE_KEY = "financas-pessoais-v2";
 
 export function FinanceProvider({ children }: { children: ReactNode }) {
   const [incomes, setIncomes] = useState<Income[]>(initialIncomes);

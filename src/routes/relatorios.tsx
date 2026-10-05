@@ -50,7 +50,7 @@ function Reports() {
       : range === "semana"
         ? weeklyHistory.map((w) => ({ ...w, income: totals.income / 4, expenses: spent / 4 }))
         : yearlyHistory.map((y, i, a) =>
-            i === a.length - 1 ? { ...y, income: y.income - 12570 + totals.income, expenses: y.expenses - 8950 + spent } : y,
+            i === a.length - 1 ? { ...y, income: totals.income, expenses: spent } : y,
           );
 
   const income = data.reduce((s, d) => s + d.income, 0);
