@@ -175,7 +175,9 @@ type Store = {
   };
 };
 
-const FinanceContext = createContext<Store | null>(null);
+// Keep a single context instance across hot reloads so provider and consumers always match
+const g = globalThis as unknown as { __financeCtx?: React.Context<Store | null> };
+const FinanceContext = g.__financeCtx ?? (g.__financeCtx = createContext<Store | null>(null));
 
 const STORAGE_KEY = "financas-pessoais-v1";
 
