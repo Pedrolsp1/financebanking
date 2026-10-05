@@ -52,6 +52,7 @@ function Investments() {
     cardExpenses,
     goals,
     addGoal,
+    addDebitExpense,
     updateGoal,
     deleteGoal,
     updateDebitExpense,
@@ -63,8 +64,38 @@ function Investments() {
   const [name, setName] = useState("");
   const [target, setTarget] = useState("");
   const [saved, setSaved] = useState("");
+  const [invName, setInvName] = useState("");
+  const [invValue, setInvValue] = useState("");
+  const [invPct, setInvPct] = useState("100");
+  const [invDate, setInvDate] = useState(new Date().toISOString().slice(0, 10));
 
   const assets = [...debitExpenses, ...cardExpenses].filter((e) => e.category === "Investimento");
+  const pctOf = (a: (typeof assets)[number]) => ("cdiPct" in a ? a.cdiPct : undefined);
+  const totalEarned = assets.reduce((s, a) => {
+    const p = pctOf(a);
+    return p ? s + estimateYield(a.value, p, a.date).earned : s;
+  }, 0);
+  const totalYearly = assets.reduce((s, a) => {
+    const p = pctOf(a);
+    return p ? s + estimateYield(a.value, p, a.date).yearly : s;
+  }, 0);
+
+  const submitInvestment = (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = Number(invValue);
+    if (!invName.trim() || !v) return;
+    addDebitExpense({
+      name: invName.trim(),
+      value: v,
+      category: "Investimento",
+      date: invDate,
+      method: "Pix",
+      cdiPct: Number(invPct) || 0,
+    });
+    setInvName("");
+    setInvValue("");
+    toast.success("Aporte adicionado");
+  };
 
   const byAsset = Object.values(
     assets.reduce<Record<string, { name: string; value: number }>>((acc, a) => {
@@ -89,7 +120,7 @@ function Investments() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-soft">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Total aportado</p>
@@ -104,11 +135,52 @@ function Investments() {
         </Card>
         <Card className="shadow-soft">
           <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Rendimento acumulado</p>
+            <p className="mt-2 text-2xl font-semibold text-primary">{brlExact(totalEarned)}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Estimado {brl(totalYearly)}/ano · CDI {(CDI_ANNUAL * 100).toFixed(2)}% a.a.
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="shadow-soft">
+          <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Patrimônio líquido</p>
             <p className="mt-2 text-2xl font-semibold">{brl(totals.netWorth)}</p>
           </CardContent>
         </Card>
       </div>
+
+      <Card className="shadow-soft">
+        <CardHeader>
+          <CardTitle className="text-base">Novo aporte</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end"
+            onSubmit={submitInvestment}
+          >
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="inv-name">Ativo</Label>
+              <Input id="inv-name" placeholder="Ex.: CDB Banco X" value={invName} onChange={(e) => setInvName(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="inv-value">Valor (R$)</Label>
+              <Input id="inv-value" type="number" value={invValue} onChange={(e) => setInvValue(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="inv-pct">% do CDI</Label>
+              <Input id="inv-pct" type="number" value={invPct} onChange={(e) => setInvPct(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="inv-date">Data</Label>
+              <Input id="inv-date" type="date" value={invDate} onChange={(e) => setInvDate(e.target.value)} />
+            </div>
+            <Button type="submit">
+              <Plus className="h-4 w-4" /> Adicionar
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="shadow-soft">
