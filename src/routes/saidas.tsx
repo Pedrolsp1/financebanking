@@ -279,6 +279,13 @@ function CreditTab() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {cardExpenses.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                      Nenhuma compra no cartão ainda. Adicione a primeira ao lado.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
@@ -435,6 +442,13 @@ function DebitTab() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {debitExpenses.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                      Nenhum gasto no débito/Pix ainda. Adicione o primeiro ao lado.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>

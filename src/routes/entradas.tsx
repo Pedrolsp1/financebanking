@@ -165,6 +165,13 @@ function Incomes() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {incomes.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                      Nenhuma entrada lançada ainda. Adicione a primeira ao lado.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>

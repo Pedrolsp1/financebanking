@@ -80,7 +80,7 @@ const lastMonthLabels = (n: number) =>
     const d = new Date();
     d.setDate(1);
     d.setMonth(d.getMonth() - (n - 1 - i));
-    return MONTH_LABELS[d.getMonth()];
+    return MONTH_LABELS[d.getMonth()] ?? "";
   });
 
 /** Históricos começam zerados — tudo passa a vir dos lançamentos reais do usuário */
