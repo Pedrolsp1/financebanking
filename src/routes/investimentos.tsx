@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -68,6 +69,7 @@ function Investments() {
   const [invName, setInvName] = useState("");
   const [invValue, setInvValue] = useState("");
   const [invPct, setInvPct] = useState("100");
+  const [invAsExpense, setInvAsExpense] = useState(true);
   const [invDate, setInvDate] = useState(new Date().toISOString().slice(0, 10));
 
   const assets = [...debitExpenses, ...cardExpenses].filter((e) => e.category === "Investimento");
@@ -92,6 +94,7 @@ function Investments() {
       date: invDate,
       method: "Pix",
       cdiPct: Number(invPct) || 0,
+      noExpense: !invAsExpense,
     });
     setInvName("");
     setInvValue("");
@@ -157,7 +160,7 @@ function Investments() {
         </CardHeader>
         <CardContent>
           <form
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end"
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto_auto] lg:items-end"
             onSubmit={submitInvestment}
           >
             <div className="flex flex-col gap-2">
@@ -175,6 +178,10 @@ function Investments() {
             <div className="flex flex-col gap-2">
               <Label htmlFor="inv-date">Data</Label>
               <Input id="inv-date" type="date" value={invDate} onChange={(e) => setInvDate(e.target.value)} />
+            </div>
+            <div className="flex items-center gap-2 pb-2">
+              <Switch id="inv-exp" checked={invAsExpense} onCheckedChange={setInvAsExpense} />
+              <Label htmlFor="inv-exp" className="whitespace-nowrap">Lançar como gasto</Label>
             </div>
             <Button type="submit">
               <Plus className="h-4 w-4" /> Adicionar
@@ -258,7 +265,7 @@ function Investments() {
                           { key: "name", label: "Ativo", type: "text" },
                           { key: "value", label: "Valor (R$)", type: "number" },
                           { key: "date", label: "Data", type: "date" },
-                          ...("method" in a ? [{ key: "cdiPct", label: "% do CDI", type: "number" as const }] : []),
+                          ...("method" in a ? [{ key: "cdiPct", label: "% do CDI", type: "number" as const }, { key: "noExpense", label: "Não lançar como gasto", type: "switch" as const }] : []),
                         ]}
                         onSave={(v) =>
                           "method" in a ? updateDebitExpense(a.id, v) : updateCardExpense(a.id, v)
