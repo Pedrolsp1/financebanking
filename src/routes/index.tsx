@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
-  CREDIT_LIMIT,
   MONTHLY_BUDGET,
   brl,
   formatDate,
@@ -42,7 +41,7 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const { totals, goals } = useFinance();
   const budgetPct = Math.min(100, (totals.budgetUsed / MONTHLY_BUDGET) * 100);
-  const cardPct = Math.min(100, (totals.cardBill / CREDIT_LIMIT) * 100);
+  const cardPct = Math.min(100, (totals.cardBill / (totals.creditLimit || 1)) * 100);
 
   const cards = [
     {
@@ -54,7 +53,7 @@ function Dashboard() {
     {
       label: "Fatura do mês",
       value: brl(totals.cardBill),
-      hint: `${cardPct.toFixed(0)}% do limite de ${brl(CREDIT_LIMIT)}`,
+      hint: `${cardPct.toFixed(0)}% do limite de ${brl(totals.creditLimit)}`,
       icon: CreditCard,
     },
     {
