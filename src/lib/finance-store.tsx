@@ -11,7 +11,9 @@ export const CATEGORIES = [
   "Investimento",
 ] as const;
 
-export type Category = (typeof CATEGORIES)[number];
+export type Category = string;
+
+export type CreditCardAccount = { id: string; name: string; limit: number };
 
 export type Income = {
   id: string;
@@ -28,6 +30,7 @@ export type CardExpense = {
   category: Category;
   date: string;
   installments: number;
+  cardId?: string;
 };
 
 export type DebitExpense = {
@@ -36,8 +39,11 @@ export type DebitExpense = {
   value: number;
   category: Category;
   date: string;
-  method: "Débito" | "Pix";
+  /** "Pix", "Débito" ou "Investimento: <ativo>" */
+  method: string;
   cdiPct?: number;
+  /** Quando true, não conta como gasto (ex.: aporte com dinheiro já guardado) */
+  noExpense?: boolean;
 };
 
 /** Taxa CDI anual de referência (editável no futuro) */
@@ -111,6 +117,7 @@ export const yearlyHistory = ["2023", "2024", "2025", "2026"].map((period) => ({
 export const upcomingBills: { id: string; name: string; value: number; due: string }[] = [];
 
 export const CREDIT_LIMIT = 12000;
+const DEFAULT_CARDS: CreditCardAccount[] = [{ id: "card1", name: "Cartão 1", limit: CREDIT_LIMIT }];
 export const MONTHLY_BUDGET = 5000;
 export const STARTING_BALANCE = 0;
 
@@ -120,6 +127,12 @@ type Store = {
   cardExpenses: CardExpense[];
   debitExpenses: DebitExpense[];
   goals: Goal[];
+  cards: CreditCardAccount[];
+  categories: string[];
+  addCard: (c: Omit<CreditCardAccount, "id">) => void;
+  updateCard: (id: string, d: Partial<CreditCardAccount>) => void;
+  deleteCard: (id: string) => void;
+  addCategory: (c: string) => void;
   addIncome: (i: Omit<Income, "id">) => void;
   addCardExpense: (e: Omit<CardExpense, "id">) => void;
   addDebitExpense: (e: Omit<DebitExpense, "id">) => void;
@@ -143,6 +156,7 @@ type Store = {
     invested: number;
     balance: number;
     netWorth: number;
+    creditLimit: number;
   };
 };
 
@@ -157,6 +171,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const [cardExpenses, setCardExpenses] = useState<CardExpense[]>(initialCard);
   const [debitExpenses, setDebitExpenses] = useState<DebitExpense[]>(initialDebit);
   const [goals, setGoals] = useState<Goal[]>(initialGoals);
+  const [cards, setCards] = useState<CreditCardAccount[]>(DEFAULT_CARDS);
+  const [customCats, setCustomCats] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -168,6 +184,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         if (Array.isArray(d.cardExpenses)) setCardExpenses(d.cardExpenses);
         if (Array.isArray(d.debitExpenses)) setDebitExpenses(d.debitExpenses);
         if (Array.isArray(d.goals)) setGoals(d.goals);
+        if (Array.isArray(d.cards) && d.cards.length) setCards(d.cards);
+        if (Array.isArray(d.customCats)) setCustomCats(d.customCats);
       }
     } catch {
       /* ignore */
@@ -179,9 +197,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (!loaded) return;
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ incomes, cardExpenses, debitExpenses, goals }),
+      JSON.stringify({ incomes, cardExpenses, debitExpenses, goals, cards, customCats }),
     );
-  }, [loaded, incomes, cardExpenses, debitExpenses, goals]);
+  }, [loaded, incomes, cardExpenses, debitExpenses, goals, cards, customCats]);
 
   const value = useMemo<Store>(() => {
     const upd = <T extends { id: string }>(set: React.Dispatch<React.SetStateAction<T[]>>) =>
@@ -191,12 +209,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const income = incomes.reduce((s, i) => s + i.value, 0);
     const cardBill = cardExpenses.reduce((s, e) => s + e.value / e.installments, 0);
     const cardTotal = cardExpenses.reduce((s, e) => s + e.value, 0);
-    const debitTotal = debitExpenses.reduce((s, e) => s + e.value, 0);
+    const debitTotal = debitExpenses.filter((e) => !e.noExpense).reduce((s, e) => s + e.value, 0);
     const invested = [...debitExpenses, ...cardExpenses]
       .filter((e) => e.category === "Investimento")
       .reduce((s, e) => s + e.value, 0);
     const debitInvested = debitExpenses
-      .filter((e) => e.category === "Investimento")
+      .filter((e) => e.category === "Investimento" && !e.noExpense)
       .reduce((s, e) => s + e.value, 0);
     const budgetUsed = debitTotal - debitInvested + cardBill;
     const balance = STARTING_BALANCE + income - cardBill - debitTotal;
@@ -208,6 +226,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       cardExpenses,
       debitExpenses,
       goals,
+      cards,
+      categories: [...CATEGORIES, ...customCats.filter((c) => !(CATEGORIES as readonly string[]).includes(c))],
+      addCard: (c) => setCards((p) => [...p, { ...c, id: uid() }]),
+      updateCard: upd(setCards),
+      deleteCard: del(setCards),
+      addCategory: (c) => setCustomCats((p) => (p.includes(c) ? p : [...p, c])),
       addIncome: (i) => setIncomes((p) => [{ ...i, id: uid() }, ...p]),
       addCardExpense: (e) => setCardExpenses((p) => [{ ...e, id: uid() }, ...p]),
       addDebitExpense: (e) => setDebitExpenses((p) => [{ ...e, id: uid() }, ...p]),
@@ -226,9 +250,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       monthlyLive: monthlyHistory.map((p, i, a) =>
         i === a.length - 1 ? { ...p, income, expenses: cardBill + debitTotal } : p,
       ),
-      totals: { income, cardBill, cardTotal, debitTotal, budgetUsed, invested, balance, netWorth },
+      totals: { income, cardBill, cardTotal, debitTotal, budgetUsed, invested, balance, netWorth, creditLimit: cards.reduce((s, c) => s + c.limit, 0) },
     };
-  }, [incomes, cardExpenses, debitExpenses, goals]);
+  }, [incomes, cardExpenses, debitExpenses, goals, cards, customCats]);
 
   return <FinanceContext.Provider value={value}>{children}</FinanceContext.Provider>;
 }
