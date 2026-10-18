@@ -16,7 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { RowActions } from "@/components/RowActions";
 import { MONTHLY_BUDGET, brl, formatDate, useFinance, type CreditCardAccount } from "@/lib/finance-store";
 
-export const Route = createFileRoute("/saidas")({
+export const Route = createFileRoute("/_authenticated/saidas")({
   head: () => ({
     meta: [
       { title: "Saídas — Finanças Pessoais" },

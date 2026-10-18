@@ -1,12 +1,16 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   ArrowDownLeft,
   ArrowUpRight,
   BarChart3,
+  LogOut,
   PiggyBank,
   Wallet,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import type { ReactNode } from "react";
 import {
   Area,
@@ -125,6 +129,32 @@ function EvolutionStrip() {
   );
 }
 
+function UserBox() {
+  const [email, setEmail] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
+  }, []);
+  const signOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+  return (
+    <div className="mt-auto flex flex-col gap-2 border-t border-border px-2 pt-4">
+      <p className="truncate text-xs text-muted-foreground" title={email ?? ""}>{email}</p>
+      <button
+        onClick={signOut}
+        className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+      >
+        <LogOut className="h-4 w-4" /> Sair
+      </button>
+    </div>
+  );
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
@@ -152,6 +182,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
+          <UserBox />
         </aside>
 
         <main className="flex min-w-0 flex-1 flex-col gap-6">

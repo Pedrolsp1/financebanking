@@ -19,7 +19,7 @@ import {
 import { RowActions } from "@/components/RowActions";
 import { brl, formatDate, useFinance } from "@/lib/finance-store";
 
-export const Route = createFileRoute("/entradas")({
+export const Route = createFileRoute("/_authenticated/entradas")({
   head: () => ({
     meta: [
       { title: "Entradas — Finanças Pessoais" },
