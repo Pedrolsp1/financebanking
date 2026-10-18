@@ -9,128 +9,129 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as EntradasRouteImport } from './routes/entradas'
-import { Route as InvestimentosRouteImport } from './routes/investimentos'
-import { Route as RelatoriosRouteImport } from './routes/relatorios'
-import { Route as SaidasRouteImport } from './routes/saidas'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedEntradasRouteImport } from './routes/_authenticated/entradas'
+import { Route as AuthenticatedInvestimentosRouteImport } from './routes/_authenticated/investimentos'
+import { Route as AuthenticatedRelatoriosRouteImport } from './routes/_authenticated/relatorios'
+import { Route as AuthenticatedSaidasRouteImport } from './routes/_authenticated/saidas'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/_authenticated/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EntradasRoute = EntradasRouteImport.update({
-  id: '/entradas',
+const AuthenticatedEntradasRoute = AuthenticatedEntradasRouteImport.update({
+  id: '/_authenticated/entradas',
   path: '/entradas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InvestimentosRoute = InvestimentosRouteImport.update({
-  id: '/investimentos',
-  path: '/investimentos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RelatoriosRoute = RelatoriosRouteImport.update({
-  id: '/relatorios',
+const AuthenticatedInvestimentosRoute =
+  AuthenticatedInvestimentosRouteImport.update({
+    id: '/_authenticated/investimentos',
+    path: '/investimentos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedRelatoriosRoute = AuthenticatedRelatoriosRouteImport.update({
+  id: '/_authenticated/relatorios',
   path: '/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SaidasRoute = SaidasRouteImport.update({
-  id: '/saidas',
+const AuthenticatedSaidasRoute = AuthenticatedSaidasRouteImport.update({
+  id: '/_authenticated/saidas',
   path: '/saidas',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/entradas': typeof EntradasRoute
-  '/investimentos': typeof InvestimentosRoute
-  '/relatorios': typeof RelatoriosRoute
-  '/saidas': typeof SaidasRoute
+  '/entradas': typeof AuthenticatedEntradasRoute
+  '/investimentos': typeof AuthenticatedInvestimentosRoute
+  '/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/saidas': typeof AuthenticatedSaidasRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/entradas': typeof EntradasRoute
-  '/investimentos': typeof InvestimentosRoute
-  '/relatorios': typeof RelatoriosRoute
-  '/saidas': typeof SaidasRoute
+  '/entradas': typeof AuthenticatedEntradasRoute
+  '/investimentos': typeof AuthenticatedInvestimentosRoute
+  '/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/saidas': typeof AuthenticatedSaidasRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/entradas': typeof EntradasRoute
-  '/investimentos': typeof InvestimentosRoute
-  '/relatorios': typeof RelatoriosRoute
-  '/saidas': typeof SaidasRoute
+  '/_authenticated/entradas': typeof AuthenticatedEntradasRoute
+  '/_authenticated/investimentos': typeof AuthenticatedInvestimentosRoute
+  '/_authenticated/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/_authenticated/saidas': typeof AuthenticatedSaidasRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/entradas' | '/investimentos' | '/relatorios' | '/saidas'
+  fullPaths: '/entradas' | '/investimentos' | '/relatorios' | '/saidas' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/entradas' | '/investimentos' | '/relatorios' | '/saidas'
+  to: '/entradas' | '/investimentos' | '/relatorios' | '/saidas' | '/'
   id:
     | '__root__'
-    | '/'
-    | '/entradas'
-    | '/investimentos'
-    | '/relatorios'
-    | '/saidas'
+    | '/_authenticated/entradas'
+    | '/_authenticated/investimentos'
+    | '/_authenticated/relatorios'
+    | '/_authenticated/saidas'
+    | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  EntradasRoute: typeof EntradasRoute
-  InvestimentosRoute: typeof InvestimentosRoute
-  RelatoriosRoute: typeof RelatoriosRoute
-  SaidasRoute: typeof SaidasRoute
+  AuthenticatedEntradasRoute: typeof AuthenticatedEntradasRoute
+  AuthenticatedInvestimentosRoute: typeof AuthenticatedInvestimentosRoute
+  AuthenticatedRelatoriosRoute: typeof AuthenticatedRelatoriosRoute
+  AuthenticatedSaidasRoute: typeof AuthenticatedSaidasRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entradas': {
-      id: '/entradas'
+    '/_authenticated/entradas': {
+      id: '/_authenticated/entradas'
       path: '/entradas'
       fullPath: '/entradas'
-      preLoaderRoute: typeof EntradasRouteImport
+      preLoaderRoute: typeof AuthenticatedEntradasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/investimentos': {
-      id: '/investimentos'
+    '/_authenticated/investimentos': {
+      id: '/_authenticated/investimentos'
       path: '/investimentos'
       fullPath: '/investimentos'
-      preLoaderRoute: typeof InvestimentosRouteImport
+      preLoaderRoute: typeof AuthenticatedInvestimentosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/relatorios': {
-      id: '/relatorios'
+    '/_authenticated/relatorios': {
+      id: '/_authenticated/relatorios'
       path: '/relatorios'
       fullPath: '/relatorios'
-      preLoaderRoute: typeof RelatoriosRouteImport
+      preLoaderRoute: typeof AuthenticatedRelatoriosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/saidas': {
-      id: '/saidas'
+    '/_authenticated/saidas': {
+      id: '/_authenticated/saidas'
       path: '/saidas'
       fullPath: '/saidas'
-      preLoaderRoute: typeof SaidasRouteImport
+      preLoaderRoute: typeof AuthenticatedSaidasRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  EntradasRoute: EntradasRoute,
-  InvestimentosRoute: InvestimentosRoute,
-  RelatoriosRoute: RelatoriosRoute,
-  SaidasRoute: SaidasRoute,
+  AuthenticatedEntradasRoute: AuthenticatedEntradasRoute,
+  AuthenticatedInvestimentosRoute: AuthenticatedInvestimentosRoute,
+  AuthenticatedRelatoriosRoute: AuthenticatedRelatoriosRoute,
+  AuthenticatedSaidasRoute: AuthenticatedSaidasRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
