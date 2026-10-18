@@ -21,7 +21,7 @@ import { RowActions } from "@/components/RowActions";
 import { toast } from "sonner";
 import { brl, brlExact, CDI_ANNUAL, estimateYield, formatDate, useFinance } from "@/lib/finance-store";
 
-export const Route = createFileRoute("/investimentos")({
+export const Route = createFileRoute("/_authenticated/investimentos")({
   head: () => ({
     meta: [
       { title: "Investimentos — Finanças Pessoais" },
