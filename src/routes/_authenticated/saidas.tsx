@@ -258,13 +258,13 @@ function NewExpenseForm({ investAssets }: { investAssets: string[] }) {
     let cat = category;
     if (creatingCat) {
       cat = newCat.trim();
-      if (!cat) return toast.error("Digite o nome da nova categoria");
+      if (!cat) { toast.error("Digite o nome da nova categoria"); return; }
       addCategory(cat);
       setCategory(cat);
       setCreatingCat(false);
       setNewCat("");
     }
-    if (!name.trim() || !v) return toast.error("Preencha nome e valor");
+    if (!name.trim() || !v) { toast.error("Preencha nome e valor"); return; }
     if (isCard) {
       addCardExpense({ name: name.trim(), value: v, category: cat, date, installments: Math.max(1, Number(installments) || 1), cardId: forma.slice(5) });
     } else {
