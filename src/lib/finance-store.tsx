@@ -157,7 +157,8 @@ const g = globalThis as unknown as { __financeCtx?: React.Context<Store | null> 
 const FinanceContext = g.__financeCtx ?? (g.__financeCtx = createContext<Store | null>(null));
 
 /* ---------- mapeamento app <-> banco ---------- */
-type Row = Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Row = any;
 const num = (v: unknown) => Number(v ?? 0);
 
 const toIncome = (r: Row): Income => ({
