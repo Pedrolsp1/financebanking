@@ -8,6 +8,13 @@
       "when": 1792334663393,
       "tag": "0000_finance_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792445150080,
+      "tag": "0001_admin_roles",
+      "breakpoints": true
     }
   ]
 }

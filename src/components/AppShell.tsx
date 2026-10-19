@@ -8,9 +8,11 @@ import {
   BarChart3,
   LogOut,
   PiggyBank,
+  ShieldCheck,
   Wallet,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useMyRole } from "@/lib/use-role";
 import type { ReactNode } from "react";
 import {
   Area,
@@ -129,6 +131,19 @@ function EvolutionStrip() {
   );
 }
 
+function AdminLink() {
+  const { role } = useMyRole();
+  if (role === "user") return null;
+  return (
+    <Link
+      to="/admin"
+      className="mt-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground data-[status=active]:bg-primary/10 data-[status=active]:text-primary"
+    >
+      <ShieldCheck className="h-4 w-4" /> Administração
+    </Link>
+  );
+}
+
 function UserBox() {
   const [email, setEmail] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -182,6 +197,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
+          <AdminLink />
           <UserBox />
         </aside>
 
