@@ -33,7 +33,7 @@ export type CardExpense = {
   category: Category;
   date: string;
   installments: number;
-  cardId?: string;
+  cardId?: string | undefined;
 };
 
 export type DebitExpense = {
@@ -44,7 +44,7 @@ export type DebitExpense = {
   date: string;
   /** "Pix", "Débito" ou "Investimento: <ativo>" */
   method: string;
-  cdiPct?: number;
+  cdiPct?: number | undefined;
   /** Quando true, não conta como gasto (ex.: aporte com dinheiro já guardado) */
   noExpense?: boolean;
 };
@@ -157,7 +157,8 @@ const g = globalThis as unknown as { __financeCtx?: React.Context<Store | null> 
 const FinanceContext = g.__financeCtx ?? (g.__financeCtx = createContext<Store | null>(null));
 
 /* ---------- mapeamento app <-> banco ---------- */
-type Row = Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Row = any;
 const num = (v: unknown) => Number(v ?? 0);
 
 const toIncome = (r: Row): Income => ({
