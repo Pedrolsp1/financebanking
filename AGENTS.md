@@ -11,3 +11,4 @@
 
 - Finance data lives in Lovable Cloud tables (one row per user, RLS by user_id); `FinanceProvider` loads on session and writes optimistically. Why: per-user data across devices.
 - App pages live under `src/routes/_authenticated/` (client-only gate, AppShell in its layout); `/auth` and `/reset-password` are public. Why: every page needs a signed-in user.
+- Roles live in public.user_roles (owner/admin/user); the first signup becomes owner via trigger, and admin actions go through SECURITY DEFINER RPCs that check the caller's role. Why: avoid privilege escalation.
