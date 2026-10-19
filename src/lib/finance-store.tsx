@@ -33,7 +33,7 @@ export type CardExpense = {
   category: Category;
   date: string;
   installments: number;
-  cardId?: string;
+  cardId?: string | undefined;
 };
 
 export type DebitExpense = {
@@ -44,7 +44,7 @@ export type DebitExpense = {
   date: string;
   /** "Pix", "Débito" ou "Investimento: <ativo>" */
   method: string;
-  cdiPct?: number;
+  cdiPct?: number | undefined;
   /** Quando true, não conta como gasto (ex.: aporte com dinheiro já guardado) */
   noExpense?: boolean;
 };
