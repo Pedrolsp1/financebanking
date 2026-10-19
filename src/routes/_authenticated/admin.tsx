@@ -49,7 +49,10 @@ function AdminPage() {
 
   const toggle = async (id: string, make: boolean) => {
     const { error } = await supabase.rpc("owner_set_admin", { _target: id, _make_admin: make });
-    if (error) return toast.error("Não foi possível alterar o acesso.");
+    if (error) {
+      toast.error("Não foi possível alterar o acesso.");
+      return;
+    }
     toast.success(make ? "Agora é administrador" : "Acesso de administrador removido");
     qc.invalidateQueries({ queryKey: ["admin-users"] });
   };
